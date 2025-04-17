@@ -10,7 +10,8 @@ body {
     width: 600px;
     height: 300px;
     overflow-y: scroll;
-    background: paleturquoise;
+    background: rgb(37, 37, 37);
+    color: white;
     font-family: "Montserrat", sans-serif;
 }
 
@@ -181,3 +182,23 @@ a{
     border: none;
     cursor: pointer;
   }
+
+
+  #dots {
+    margin: 10px 0;
+  }
+  
+  .dot {
+    height: 10px;
+    width: 10px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dot.active {
+    background-color: #555;
+  }
+  

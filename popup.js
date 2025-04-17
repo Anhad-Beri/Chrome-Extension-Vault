@@ -18,12 +18,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     renderCard(currentIndex);
+    renderDots();
+    updateDots();
   });
 
   prevBtn.addEventListener("click", () => {
     if (currentIndex > 0) {
       currentIndex--;
       renderCard(currentIndex);
+      updateDots();
+
     }
   });
 
@@ -31,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentIndex < highlights.length - 1) {
       currentIndex++;
       renderCard(currentIndex);
+      updateDots();
+
     }
   });
 
@@ -81,3 +87,22 @@ window.deleteHighlight = (index) => {
     renderCard(currentIndex);
   });
 };
+
+
+function renderDots() {
+    const dotsContainer = document.getElementById("dots");
+    dotsContainer.innerHTML = "";
+    for (let i = 0; i < highlights.length; i++) {
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dotsContainer.appendChild(dot);
+    }
+  }
+  
+  function updateDots() {
+    const dots = document.querySelectorAll(".dot");
+    dots.forEach((dot, idx) => {
+      dot.classList.toggle("active", idx === currentIndex);
+    });
+  }
+  
