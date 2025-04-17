@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentIndex--;
       renderCard(currentIndex);
       updateDots();
-
     }
   });
 
@@ -36,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
       currentIndex++;
       renderCard(currentIndex);
       updateDots();
-
     }
   });
 
@@ -55,54 +53,68 @@ function renderCard(index) {
   const carousel = document.getElementById("carousel");
   const item = highlights[index];
 
-  const cardHTML = `
-    <div class="card">
-      <strong>${item.text}</strong>
-      <a href="${item.url}" target="_blank">${item.title.split("|")[0]}</a>
-      <div>
-        <button onclick="copyText(${index})">Copy</button>
-        <button onclick="deleteHighlight(${index})">Delete</button>
-      </div>
-    </div>
-  `;
+  const card = document.createElement("div");
+  card.className = "card";
 
-  carousel.innerHTML = cardHTML;
+  const textEl = document.createElement("strong");
+  textEl.textContent = item.text;
+
+  const link = document.createElement("a");
+  link.href = item.url;
+  link.target = "_blank";
+  link.textContent = item.title;
+
+  const btnContainer = document.createElement("div");
+
+  const copyBtn = document.createElement("button");
+  copyBtn.textContent = "Copy";
+  copyBtn.addEventListener("click", () => {
+    navigator.clipboard.writeText(item.text).then(() => {
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => {
+        copyBtn.textContent = "Copy";
+      }, 1000);
+    });
+  });
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.addEventListener("click", () => {
+    highlights.splice(index, 1);
+    chrome.storage.sync.set({ highlights }, () => {
+      if (currentIndex >= highlights.length) {
+        currentIndex = Math.max(0, highlights.length - 1);
+      }
+      renderCard(currentIndex);
+      renderDots();
+      updateDots();
+    });
+  });
+
+  btnContainer.appendChild(copyBtn);
+  btnContainer.appendChild(deleteBtn);
+
+  card.appendChild(textEl);
+  card.appendChild(link);
+  card.appendChild(btnContainer);
+
+  carousel.innerHTML = "";
+  carousel.appendChild(card);
 }
 
-window.copyText = (index) => {
-  const textToCopy = highlights[index].text;
-  navigator.clipboard.writeText(textToCopy).then(() => {
-    const btn = document.querySelector(".card button:first-child");
-    btn.textContent = "Copied!";
-    setTimeout(() => {
-      btn.textContent = "Copy";
-    }, 1000);
-  });
-};
-
-window.deleteHighlight = (index) => {
-  highlights.splice(index, 1);
-  chrome.storage.sync.set({ highlights }, () => {
-    if (currentIndex >= highlights.length) currentIndex = Math.max(0, highlights.length - 1);
-    renderCard(currentIndex);
-  });
-};
-
-
 function renderDots() {
-    const dotsContainer = document.getElementById("dots");
-    dotsContainer.innerHTML = "";
-    for (let i = 0; i < highlights.length; i++) {
-      const dot = document.createElement("span");
-      dot.className = "dot";
-      dotsContainer.appendChild(dot);
-    }
+  const dotsContainer = document.getElementById("dots");
+  dotsContainer.innerHTML = "";
+  for (let i = 0; i < highlights.length; i++) {
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dotsContainer.appendChild(dot);
   }
-  
-  function updateDots() {
-    const dots = document.querySelectorAll(".dot");
-    dots.forEach((dot, idx) => {
-      dot.classList.toggle("active", idx === currentIndex);
-    });
-  }
-  
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll(".dot");
+  dots.forEach((dot, idx) => {
+    dot.classList.toggle("active", idx === currentIndex);
+  });
+}
