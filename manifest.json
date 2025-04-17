@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "Vault",
+    "version": "1.0",
+    "permissions": ["contextMenus", "storage", "activeTab", "scripting"],
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ]
+  }
+  

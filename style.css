@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    width: 600px;
+    height: 300px;
+    overflow-y: scroll;
+    background: paleturquoise;
+    font-family: "Montserrat", sans-serif;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    overflow-y: scroll;
+}
+
+.nav {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main {
+    width: 100%;
+    height: 85%;
+    align-items: center;
+    justify-content: center;
+    padding: 2%;
+}
+
+ul {
+    width: 90%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+li {
+    width: 100%;
+    height: 30%;
+    border-radius: 50px;
+    background-image: linear-gradient(135deg, #feb692 0%, #ea5455 100%);
+    box-shadow: 0 20px 30px -6px rgba(238, 103, 97, 0.5);
+    outline: none;
+    cursor: pointer;
+    color: white;
+    margin-bottom: 2%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+
+    
+
+}
+
+.content{
+    width: 80%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title{
+    width: 100%;
+    height: 30%;
+    font-size: 0.75rem;
+    text-overflow: ellipsis;
+    font-weight: bold;
+    overflow-y: hidden;
+    padding-left: 2%;
+}
+
+.text{
+    width: 100%;
+    height: 70%;
+    font-size: 0.5rem;
+    text-overflow: ellipsis;
+    padding-left: 2%;
+}
+
+a{
+    color: black;
+    text-decoration: none;
+}
+
+
+.carousel {
+    width: 500px; /* Adjust as needed */
+    height: 300px; /* Adjust as needed */
+    overflow: hidden; /* Hide slides that are not visible */
+    position: relative;
+}
+
+.carousel-slide {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none; /* Initially hide all slides */
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure images fill the container */
+}
+
+#carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  
+  #carousel {
+    width: 240px;
+    height: auto;
+    overflow: hidden;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background-color: #fff;
+    text-align: left;
+  }
+  
+  .card strong {
+    font-size: 15px;
+  }
+  
+  .card a {
+    color: #1a73e8;
+    font-size: 13px;
+    display: block;
+    margin-top: 6px;
+    text-decoration: none;
+  }
+  
+  .card button {
+    margin-right: 6px;
+    margin-top: 10px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  .card button:hover {
+    background-color: #ddd;
+  }
+  
+  #prevBtn, #nextBtn {
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
