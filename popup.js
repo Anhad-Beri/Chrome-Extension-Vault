@@ -1,11 +1,14 @@
 let highlights = [];
 let currentIndex = 0;
+let filteredHighlights = [];
+let isSearching = false;
 
 document.addEventListener("DOMContentLoaded", () => {
   const carousel = document.getElementById("carousel");
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
   const exportBtn = document.getElementById("exportBtn");
+  const searchBar = document.getElementById("searchBar");
 
   chrome.storage.sync.get("highlights", (data) => {
     highlights = data.highlights || [];
@@ -31,7 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   nextBtn.addEventListener("click", () => {
-    if (currentIndex < highlights.length - 1) {
+    const list = getCurrentHighlights();
+    if (currentIndex < list.length - 1) {
       currentIndex++;
       renderCard(currentIndex);
       updateDots();
@@ -47,11 +51,63 @@ document.addEventListener("DOMContentLoaded", () => {
     a.download = 'highlights.txt';
     a.click();
   });
+
+  searchBar.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    if (query === "") {
+      isSearching = false;
+      filteredHighlights = [];
+      renderCard(currentIndex);
+      renderDots();
+      updateDots();
+    } else {
+      isSearching = true;
+      filteredHighlights = highlights.filter(h =>
+        h.text.toLowerCase().includes(query) ||
+        h.title.toLowerCase().includes(query)
+      );
+
+      currentIndex = 0;
+      if (filteredHighlights.length === 0) {
+        document.getElementById("carousel").innerHTML = "<p>No matches found.</p>";
+        document.getElementById("dots").innerHTML = "";
+      } else {
+        renderCard(currentIndex);
+        renderDots();
+        updateDots();
+      }
+    }
+  });
+
+
 });
+
+exportBtn.addEventListener("click", () => {
+  const ws_data = highlights.map(h => ({
+    Text: h.text,
+    Title: h.title,
+    URL: h.url
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(ws_data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Highlights");
+
+  const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+  const blob = new Blob([wbout], { type: "application/octet-stream" });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "highlights.xlsx";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
 
 function renderCard(index) {
   const carousel = document.getElementById("carousel");
-  const item = highlights[index];
+  const item = getCurrentHighlights()[index];
 
   const card = document.createElement("div");
   card.className = "card";
@@ -105,7 +161,8 @@ function renderCard(index) {
 function renderDots() {
   const dotsContainer = document.getElementById("dots");
   dotsContainer.innerHTML = "";
-  for (let i = 0; i < highlights.length; i++) {
+  const list = getCurrentHighlights();
+  for (let i = 0; i < list.length; i++) {
     const dot = document.createElement("span");
     dot.className = "dot";
     dotsContainer.appendChild(dot);
@@ -114,7 +171,12 @@ function renderDots() {
 
 function updateDots() {
   const dots = document.querySelectorAll(".dot");
+  const list = getCurrentHighlights();
   dots.forEach((dot, idx) => {
     dot.classList.toggle("active", idx === currentIndex);
   });
+}
+
+function getCurrentHighlights() {
+  return isSearching ? filteredHighlights : highlights;
 }

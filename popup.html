@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Saved Highlights</title>
-  <link rel="stylesheet" href="./style.css">
+    <title>Saved Highlights</title>
+    <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
 
     <div class="container">
@@ -12,29 +14,27 @@
                 <img src="" alt="">
                 <div class="txt">VAULT</div>
             </div>
-            <div class="profile"></div>
+            <div class="search">
+                <input type="text" id="searchBar" placeholder="Search..." />
+            </div>
         </div>
         <div class="main">
-            
+
             <div id="carousel-container">
                 <div class="c-hold">
-                <button id="prevBtn">&#8592;</button>
-                <div id="carousel"></div>
-                <button id="nextBtn">&#8594;</button>
+                    <button id="prevBtn">&#8592;</button>
+                    <div id="carousel"></div>
+                    <button id="nextBtn">&#8594;</button>
+                </div>
+                <div id="dots"></div>
             </div>
-            <div id="dots"></div>
+            <div class="btn-container">
+                <button id="exportBtn">Export Highlights</button>
             </div>
-
-
         </div>
     </div>
-
-  
-<!-- Export Highlights to Text -> Excel -->
-<button id="exportBtn">Export Highlights</button>
-
-<script src="carousel.js"></script>  
-<script src="popup.js"></script>
+    <script src="popup.js"></script>
 
 </body>
+
 </html>

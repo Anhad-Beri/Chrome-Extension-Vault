@@ -21,6 +21,5 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   });
   
-  // Request saved highlights from background when page loads
   chrome.runtime.sendMessage({ type: "getHighlightsForPage", url: window.location.href });
   
