@@ -43,12 +43,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   exportBtn.addEventListener("click", () => {
-    const text = highlights.map(h => `"${h.text}"\n${h.title}\n${h.url}\n`).join("\n---\n");
-    const blob = new Blob([text], { type: 'text/plain' });
+    const data = highlights.map(h => ({
+      Text: h.text,
+      Title: h.title,
+      URL: h.url
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Highlights");
+
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
-    a.download = 'highlights.txt';
+    a.download = "highlights.xlsx";
     a.click();
   });
 
