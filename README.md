@@ -9,7 +9,6 @@ A handy Chrome Extension that lets you **highlight text on any webpage**, save i
 
 - ✅ Highlight text on any webpage and save it to your extension  
 - 🌐 Automatically saves the page title and URL  
-- 🔖 Add and edit **tags** to organize your highlights  
 - 🎠 View saved highlights in a **carousel UI** with navigation arrows and dots  
 - 🔍 **Search** highlights by text content or website  
 - 📝 **Scrolls to the highlighted text** on revisit  
