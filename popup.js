@@ -93,7 +93,14 @@ function renderCard(index) {
   const link = document.createElement("a");
   link.href = `${item.url}#highlight-${encodeURIComponent(item.text)}`;
   link.target = "_blank";
-  link.textContent = item.title;
+  ltitle = item.title.split("|")
+  if (ltitle.length > 2) {
+    link.textContent = ltitle[0];
+  }
+  else {
+    link.textContent = item.title;
+  }
+
 
   const btnContainer = document.createElement("div");
 
