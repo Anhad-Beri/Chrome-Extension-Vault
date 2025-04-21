@@ -78,32 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
-
-
 });
-
-exportBtn.addEventListener("click", () => {
-  const ws_data = highlights.map(h => ({
-    Text: h.text,
-    Title: h.title,
-    URL: h.url
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(ws_data);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Highlights");
-
-  const wbout = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-  const blob = new Blob([wbout], { type: "application/octet-stream" });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "highlights.xlsx";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
 
 function renderCard(index) {
   const carousel = document.getElementById("carousel");
@@ -116,7 +91,7 @@ function renderCard(index) {
   textEl.textContent = item.text;
 
   const link = document.createElement("a");
-  link.href = item.url;
+  link.href = `${item.url}#highlight-${encodeURIComponent(item.text)}`;
   link.target = "_blank";
   link.textContent = item.title;
 
