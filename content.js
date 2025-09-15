@@ -1,10 +1,8 @@
-
+// Utility: get all visible text nodes under root
 function getTextNodes(root = document.body) {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
     acceptNode: function (node) {
-      
       if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
-      
       let p = node.parentElement;
       while (p) {
         const style = window.getComputedStyle(p);
@@ -18,12 +16,11 @@ function getTextNodes(root = document.body) {
   });
 
   const nodes = [];
-  while (walker.nextNode()) {
-    nodes.push(walker.currentNode);
-  }
+  while (walker.nextNode()) nodes.push(walker.currentNode);
   return nodes;
 }
 
+// Find range of text across nodes
 function findTextRangeAcrossNodes(text) {
   const nodes = getTextNodes();
   if (nodes.length === 0) return null;
@@ -32,34 +29,20 @@ function findTextRangeAcrossNodes(text) {
   let combined = "";
   for (let i = 0; i < nodes.length; i++) {
     const t = nodes[i].nodeValue;
-    cumulative.push({
-      node: nodes[i],
-      start: combined.length,
-      end: combined.length + t.length,
-      text: t
-    });
+    cumulative.push({ node: nodes[i], start: combined.length, end: combined.length + t.length, text: t });
     combined += t;
   }
 
   const idx = combined.indexOf(text);
   if (idx === -1) return null;
 
-  let startNodeInfo = null;
-  let endNodeInfo = null;
+  let startNodeInfo = null, endNodeInfo = null;
   for (let i = 0; i < cumulative.length; i++) {
     const info = cumulative[i];
-    if (idx >= info.start && idx < info.end) {
-      startNodeInfo = {
-        node: info.node,
-        offset: idx - info.start
-      };
-    }
+    if (idx >= info.start && idx < info.end) startNodeInfo = { node: info.node, offset: idx - info.start };
     const endIndex = idx + text.length - 1;
     if (endIndex >= info.start && endIndex < info.end) {
-      endNodeInfo = {
-        node: info.node,
-        offset: endIndex - info.start + 1
-      };
+      endNodeInfo = { node: info.node, offset: endIndex - info.start + 1 };
       break;
     }
   }
@@ -74,17 +57,17 @@ function findTextRangeAcrossNodes(text) {
 
 function alreadyHasHighlightWithText(text) {
   const existing = document.querySelectorAll('.vault-highlight');
-  for (const el of existing) {
-    if (el.textContent === text) return true;
-  }
+  for (const el of existing) if (el.textContent === text) return true;
   return false;
 }
 
+// Highlight a given range and optionally scroll
 function highlightRangeAndScroll(range, text, id = null, shouldScroll = true) {
   try {
     const fragment = range.extractContents();
     const span = document.createElement('span');
     span.className = 'vault-highlight';
+    span.style.backgroundColor = 'yellow'; // default yellow
     if (id) span.setAttribute('data-vault-id', id);
     span.appendChild(fragment);
     range.insertNode(span);
@@ -102,22 +85,21 @@ function highlightRangeAndScroll(range, text, id = null, shouldScroll = true) {
   }
 }
 
+// Highlight text with retries
 function highlightAndScroll(text, attempt = 0, id = null, shouldScroll = true) {
   const maxAttempts = 12;
   const retryDelay = 300;
 
   if (!text || typeof text !== 'string') return;
-
   if (alreadyHasHighlightWithText(text)) return;
 
   const hrefNoQuery = window.location.href.split('#')[0].split('?')[0].toLowerCase();
   if (hrefNoQuery.endsWith('.pdf') || document.contentType === 'application/pdf' || hrefNoQuery.includes('/pdf')) {
-    console.info('Vault: PDF detected — highlighting not supported in built-in PDF viewer.');
+    console.info('Vault: PDF detected — highlighting not supported.');
     return;
   }
 
   const range = findTextRangeAcrossNodes(text);
-
   if (range) {
     const ok = highlightRangeAndScroll(range, text, id, shouldScroll);
     if (ok) return;
@@ -147,41 +129,23 @@ function highlightAndScroll(text, attempt = 0, id = null, shouldScroll = true) {
 function isAlreadyHighlighted(node, index, length) {
   const substring = node.textContent.substring(index, index + length);
   const existing = document.querySelectorAll('.vault-highlight');
-  for (const el of existing) {
-    if (el.textContent === substring) return true;
-  }
+  for (const el of existing) if (el.textContent === substring) return true;
   return false;
 }
 
+// Listen for messages from background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "highlightText") {
     highlightAndScroll(message.text, 0, message.id || null, true);
   }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  try {
-    const hash = decodeURIComponent(window.location.hash || "");
-    if (hash.startsWith("#highlight-")) {
-      const text = hash.replace("#highlight-", "");
-      highlightAndScroll(text, 0, null, true);
-    }
-  } catch (e) {
-    console.warn('Error decoding hash highlight', e);
-  }
-
-  chrome.runtime.sendMessage({
-    type: "getHighlightsForPage",
-    url: window.location.href.split("#")[0]
-  });
-});
-
-
+// Reapply highlights on page load
 function reapplyHighlightsForPage() {
   chrome.storage.sync.get(["highlights"], (data) => {
     if (!data.highlights) return;
     const currentUrl = window.location.href.split("#")[0];
-    const highlights = data.highlights.filter((h) => h.url === currentUrl);
+    const highlights = data.highlights.filter(h => h.url === currentUrl);
     highlights.forEach((h) => highlightAndScroll(h.text, 0, h.id || null, false));
   });
 }
